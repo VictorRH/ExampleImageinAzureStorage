@@ -11,5 +11,12 @@ namespace ExampleImageInAzureStorage.Controllers
     public class AzureStorageController
     {
 
+        [HttpPost]
+        public async Task<ActionResult> PostImage()
+        {
+            return null;
+
+        }
+
     }
 }
