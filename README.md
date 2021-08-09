@@ -1,4 +1,4 @@
-# ExampleImageinAzureStorage
+# Example of how to save an image to Azure Storage
 
 **Pre requirements** 
 
