@@ -1,10 +1,14 @@
+using ExampleImageInAzureStorage.Core.Persistence;
+using ExampleImageInAzureStorage.Infrastructure.Interfaz;
+using ExampleImageInAzureStorage.Infrastructure.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-
+using NetTopologySuite;
 namespace ExampleImageInAzureStorage
 {
     public class Startup
@@ -19,7 +23,23 @@ namespace ExampleImageInAzureStorage
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //this is for azure storage
+            services.AddTransient<IAzureStorageFile, AzureStorage>();
+            //this is for localhost
+            services.AddTransient<ILocalhostStorageFile, LocalStorageFile>();
 
+            services.AddAutoMapper(typeof(Startup));
+
+            services.AddHttpContextAccessor();
+
+            services.AddSingleton(NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326));
+
+
+
+            services.AddDbContext<StorageAzureContext>(options =>
+            {
+                options.UseSqlServer(Configuration.GetConnectionString("connectionDB"));
+            });
             services.AddSwaggerGen(x =>
             {
                 x.SwaggerDoc("v1", new OpenApiInfo
@@ -40,6 +60,7 @@ namespace ExampleImageInAzureStorage
             }
 
             app.UseRouting();
+            app.UseStaticFiles();
 
             app.UseAuthorization();
 
