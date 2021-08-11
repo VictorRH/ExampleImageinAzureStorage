@@ -99,5 +99,18 @@ namespace ExampleImageInAzureStorage.Controllers
             return Ok();
         }
 
+
+        [HttpGet]
+        public async Task<ActionResult> AllImages()
+        {
+            var storage = await context.ExampleStorage.ToListAsync();
+            if (storage == null)
+            {
+                return NotFound();
+            }
+            
+            return Ok(storage);
+        }
+
     }
 }

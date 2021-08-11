@@ -34,7 +34,12 @@ namespace ExampleImageInAzureStorage
 
             services.AddSingleton(NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326));
 
-
+            services.AddCors(o => o.AddPolicy("corsAPP", builder =>
+            {
+                builder.WithOrigins("*").
+                        AllowAnyMethod().
+                        AllowAnyHeader();
+            }));
 
             services.AddDbContext<StorageAzureContext>(options =>
             {
@@ -60,6 +65,8 @@ namespace ExampleImageInAzureStorage
             }
 
             app.UseRouting();
+            app.UseCors("corsAPP");
+
             app.UseStaticFiles();
 
             app.UseAuthorization();

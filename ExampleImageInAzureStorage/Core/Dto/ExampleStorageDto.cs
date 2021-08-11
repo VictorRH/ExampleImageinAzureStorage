@@ -10,7 +10,7 @@ namespace ExampleImageInAzureStorage.Core.Dto
         public string Name { get; set; }
 
         public DateTime? DateCreated { get; set; }
-
+        [Required]
         public IFormFile Picture { get; set; }
     }
 }
