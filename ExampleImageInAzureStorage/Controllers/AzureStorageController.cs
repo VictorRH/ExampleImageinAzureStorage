@@ -3,7 +3,6 @@ using ExampleImageInAzureStorage.Core.Dto;
 using ExampleImageInAzureStorage.Core.Entities;
 using ExampleImageInAzureStorage.Core.Persistence;
 using ExampleImageInAzureStorage.Infrastructure.Interfaz;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -42,7 +41,6 @@ namespace ExampleImageInAzureStorage.Controllers
             }
             return BadRequest();
         }
-        [EnableCors("corsAPP")]
         [HttpPost("localhost")]
         public async Task<ActionResult> PostImageLocalhost([FromForm] ExampleStorageDto storageDto)
         {

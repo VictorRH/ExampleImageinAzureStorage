@@ -1,4 +1,7 @@
-﻿namespace ExampleImageInAzureStorage.Infrastructure.Interfaz
+﻿using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
+
+namespace ExampleImageInAzureStorage.Infrastructure.Interfaz
 {
     public interface ILocalhostStorageFile
     {

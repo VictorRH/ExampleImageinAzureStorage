@@ -1,5 +1,10 @@
 ﻿using Azure.Storage.Blobs;
 using ExampleImageInAzureStorage.Infrastructure.Interfaz;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace ExampleImageInAzureStorage.Infrastructure.Repository
 {

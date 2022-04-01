@@ -1,4 +1,9 @@
 ﻿using ExampleImageInAzureStorage.Infrastructure.Interfaz;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using System;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace ExampleImageInAzureStorage.Infrastructure.Repository
 {

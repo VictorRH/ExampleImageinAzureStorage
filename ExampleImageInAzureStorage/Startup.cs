@@ -1,14 +1,11 @@
 using ExampleImageInAzureStorage.Core.Persistence;
 using ExampleImageInAzureStorage.Infrastructure.Interfaz;
 using ExampleImageInAzureStorage.Infrastructure.Repository;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using NetTopologySuite;
+using NetTopologySuite.Geometries;
+
 namespace ExampleImageInAzureStorage
 {
     public class Startup
@@ -17,9 +14,7 @@ namespace ExampleImageInAzureStorage
         {
             Configuration = configuration;
         }
-
         public IConfiguration Configuration { get; }
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -27,24 +22,16 @@ namespace ExampleImageInAzureStorage
             services.AddTransient<IAzureStorageFile, AzureStorage>();
             //this is for localhost
             services.AddTransient<ILocalhostStorageFile, LocalStorageFile>();
-
             services.AddAutoMapper(typeof(Startup));
-
             services.AddHttpContextAccessor();
-
-            services.AddSingleton(NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326));
-
-            services.AddCors(o => o.AddPolicy("corsAPP", builder =>
-            {
-                builder.WithOrigins("*").
-                        AllowAnyMethod().
-                        AllowAnyHeader();
-            }));
+            //services.AddSingleton(NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326));
+            services.AddSingleton<GeometryFactory>(NtsGeometryServices.Instance.CreateGeometryFactory(srid: 4326));
 
             services.AddDbContext<StorageAzureContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("connectionDB"));
             });
+            services.AddControllers();
             services.AddSwaggerGen(x =>
             {
                 x.SwaggerDoc("v1", new OpenApiInfo
@@ -53,7 +40,22 @@ namespace ExampleImageInAzureStorage
                     Version = "v1"
                 });
             });
-            services.AddControllers();
+            services.AddCors(o => o.AddPolicy("corsAPP", builder =>
+            {
+                builder.WithOrigins("*").
+                        AllowAnyMethod().
+                        AllowAnyHeader();
+            }));
+
+            //services.AddCors(opciones =>
+            //{
+            //    opciones.AddDefaultPolicy(builder =>
+            //    {
+            //        builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+            //    });
+            //});
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -63,22 +65,19 @@ namespace ExampleImageInAzureStorage
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseRouting();
-            app.UseCors("corsAPP");
-
-            app.UseStaticFiles();
-
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
             app.UseSwagger();
             app.UseSwaggerUI(x =>
             {
                 x.SwaggerEndpoint("v1/swagger.json", "Example Save Image in Azure Storage");
+            });
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
+            app.UseRouting();
+            app.UseCors("corsAPP");
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
             });
         }
     }
