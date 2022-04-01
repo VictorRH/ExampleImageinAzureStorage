@@ -46,16 +46,6 @@ namespace ExampleImageInAzureStorage
                         AllowAnyMethod().
                         AllowAnyHeader();
             }));
-
-            //services.AddCors(opciones =>
-            //{
-            //    opciones.AddDefaultPolicy(builder =>
-            //    {
-            //        builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
-            //    });
-            //});
-
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
