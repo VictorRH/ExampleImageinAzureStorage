@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using ExampleImageInAzureStorage.Core.Entities;
-using NetTopologySuite.Geometries;
 
 namespace ExampleImageInAzureStorage.Core.Dto
 {

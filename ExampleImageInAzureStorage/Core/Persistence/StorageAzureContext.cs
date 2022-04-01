@@ -7,13 +7,10 @@ namespace ExampleImageInAzureStorage.Core.Persistence
     {
         public StorageAzureContext(DbContextOptions options) : base(options)
         { }
-
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
         }
-
-        public DbSet<ExampleStorage> ExampleStorage { get; set; }
-
+        public DbSet<ExampleStorage> ExampleStorage => Set<ExampleStorage>();
     }
 }

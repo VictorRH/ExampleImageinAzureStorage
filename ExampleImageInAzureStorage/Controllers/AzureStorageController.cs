@@ -3,10 +3,9 @@ using ExampleImageInAzureStorage.Core.Dto;
 using ExampleImageInAzureStorage.Core.Entities;
 using ExampleImageInAzureStorage.Core.Persistence;
 using ExampleImageInAzureStorage.Infrastructure.Interfaz;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Threading.Tasks;
 
 namespace ExampleImageInAzureStorage.Controllers
 {
@@ -19,7 +18,6 @@ namespace ExampleImageInAzureStorage.Controllers
         private readonly IMapper mapper;
         private readonly StorageAzureContext context;
         private readonly string container = "example";
-
         public AzureStorageController(IAzureStorageFile azureStorage, ILocalhostStorageFile localhost, IMapper mapper, StorageAzureContext context)
         {
             this.azureStorage = azureStorage;
@@ -27,7 +25,6 @@ namespace ExampleImageInAzureStorage.Controllers
             this.mapper = mapper;
             this.context = context;
         }
-
         [HttpPost("azure")]
         public async Task<ActionResult> PostImageAzure([FromForm] ExampleStorageDto storageDto)
         {
@@ -45,7 +42,7 @@ namespace ExampleImageInAzureStorage.Controllers
             }
             return BadRequest();
         }
-
+        [EnableCors("corsAPP")]
         [HttpPost("localhost")]
         public async Task<ActionResult> PostImageLocalhost([FromForm] ExampleStorageDto storageDto)
         {
@@ -63,7 +60,6 @@ namespace ExampleImageInAzureStorage.Controllers
             }
             return BadRequest();
         }
-
         [HttpPut("{id}")]
         public async Task<ActionResult> PutImageAzure(int id, [FromForm] ExampleStorageDto storageDto)
         {
@@ -75,15 +71,12 @@ namespace ExampleImageInAzureStorage.Controllers
             storage = mapper.Map(storageDto, storage);
             if (storageDto.Picture != null)
             {
-                storage.Picture = await azureStorage.EditFile(container, storageDto.Picture, storage.Picture);
+                storage.Picture = await azureStorage.EditFile(container, storageDto.Picture, storage.Picture!);
             }
             storage.DateCreated = DateTime.UtcNow;
-
             await context.SaveChangesAsync();
             return Ok();
-
         }
-
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteImageAzureStorage(int id)
         {
@@ -92,14 +85,11 @@ namespace ExampleImageInAzureStorage.Controllers
             {
                 return NotFound();
             }
-
             context.Remove(storage);
             await context.SaveChangesAsync();
-            await azureStorage.DeleteFile(storage.Picture, container);
+            await azureStorage.DeleteFile(storage.Picture!, container);
             return Ok();
         }
-
-
         [HttpGet]
         public async Task<ActionResult> AllImages()
         {
@@ -108,9 +98,7 @@ namespace ExampleImageInAzureStorage.Controllers
             {
                 return NotFound();
             }
-            
             return Ok(storage);
         }
-
     }
 }
